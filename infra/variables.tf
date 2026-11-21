@@ -55,3 +55,8 @@ variable "nat_count" {
 variable "db_instance_class" {
   default = "db.t4g.medium"
 }
+
+# design is 7 days; the shared class account is on the free plan, which only allows 1 day
+variable "backup_retention" {
+  default = 7
+}

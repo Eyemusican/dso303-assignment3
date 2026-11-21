@@ -35,6 +35,6 @@ resource "aws_db_instance" "main" {
   db_subnet_group_name    = aws_db_subnet_group.main.name
   vpc_security_group_ids  = [aws_security_group.rds.id]
   publicly_accessible     = false
-  backup_retention_period = 7 # point in time restore, logs every 5 min, so RPO 5 min
+  backup_retention_period = var.backup_retention # point in time restore, logs every 5 min, so RPO 5 min
   skip_final_snapshot     = true # class project, so terraform destroy can clean up
 }
