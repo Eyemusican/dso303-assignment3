@@ -22,9 +22,14 @@ resource "aws_lb_target_group" "api" {
   target_type = "ip"
   vpc_id      = aws_vpc.main.id
 
+  # faster checks after failure test F3: a dead AZ is noticed in about 20 s instead of about 90 s
   health_check {
-    path    = "/health"
-    matcher = "200"
+    path                = "/health"
+    matcher             = "200"
+    interval            = 10
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 5
   }
 }
 
@@ -156,7 +161,7 @@ resource "aws_ecs_service" "api" {
   depends_on = [aws_lb_listener.http, aws_secretsmanager_secret_version.db]
 }
 
-# scale on average CPU, 4 to 10 tasks (turned on for load test run 2)
+# scale on average CPU between min_tasks and max_tasks (60% target)
 resource "aws_appautoscaling_target" "api" {
   count              = var.autoscaling ? 1 : 0
   service_namespace  = "ecs"
